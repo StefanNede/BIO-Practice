@@ -1,0 +1,25 @@
+from itertools import permutations
+
+inp = input().split(" ")
+parked, index = inp[0], int(inp[1])
+
+# psbs = []
+def getParked(parked, psb):
+    if len(parked) == 1:
+        return [parked]
+    spaces = [None] * len(parked)
+    pass
+
+psbs = []
+while True:
+    psb = [None] * len(parked)
+    indexOfA = parked.index('a')
+    psb[0] =  parked[indexOfA].upper()
+    psbs.append(psb)
+    break
+print(psbs)
+    
+
+# psbs = getParked(parked)
+# print(psbs)
+# print(psbs[index])
