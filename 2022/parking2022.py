@@ -1,3 +1,5 @@
+import time
+
 # PARKING - BIO round 1 2022 q3
 alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 inp = input().split(" ")
@@ -52,6 +54,7 @@ def getParked(parked, psb = [''] * len(parked), i = 0):
         if counter == index:
             #print(psb, counter)
             print(''.join(psb))
+            exit()
         counter += 1
         #psbs.append(psb)
         return
@@ -69,8 +72,10 @@ def getParked(parked, psb = [''] * len(parked), i = 0):
 
 def test():
     pass
-
+start = time.time()
 getParked(parked)
+end = time.time()
+print(end-start)
 #print(res)
 #print(psbs)
 #print(''.join(psbs[index-1]))
