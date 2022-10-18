@@ -1,69 +1,47 @@
 import time
+#naive solution is to iterate over each value with while loop and check if palindrome
 
-class Palindrome:
-    def __init__(self, num):
-        self.num = num + 1
+# current errors:
+# - doesn't work if middle number is 9 - 1 is isn't carried over
+# - doesn't work if input is 2 digit multiple of 10
 
-    def isPalindrome(self):
-        '''
-        checks if inputted num is a palindrome
-        :int num:
-        :return bool:
-        '''
-        secondHalf = 0
-        if self.num == 0:
-            return False
-        if self.num < 0 or self.num%10 == 0:
-            return False
 
-        while secondHalf < self.num:
-            secondHalf = secondHalf*10 + self.num%10
-            self.num //= 10
+def leftVright(left, right):
+    # the incoming values are going to be lists
+    left = ''.join([str(i) for i in left])
+    right = ''.join([str(i) for i in right])
+    #print(left, right)
+    if int(right[::-1]) > int(left):
+        return True
+    return False
 
-        return secondHalf == self.num or secondHalf//10 == self.num
+def getPal(num):
+    
+    '''
+    start in the middle and if the right side is greater than the left side reversed
+    then increment the index by 1 and now you can switch each corresponding case
+    to be the left one
+    e.g. 3210124 -> 321 1 124 -> 321 1 123
+    
+    9 -> 0 and increment index either side by 1
+    '''
+    if len(num) == 1 and num[0] < 9:
+        return num[0]
+    
+    # for loop to go from middle to start (index 0)
+    middleIndex = (len(num)-1)//2
+    tailMiddleIndex = -1-middleIndex
+    if num[tailMiddleIndex] >= num[middleIndex] or leftVright(num[:middleIndex], num[tailMiddleIndex+1:]):
+        num[middleIndex] += 1
+        num[tailMiddleIndex] = num[middleIndex]
+        
+    for i in range((len(num)-1//2)):
+        tailP = -1-i
+        num[tailP] = num[i]
+    return int(''.join([str(i) for i in num]))
 
-    def isPalindrome2(self):
-        return str(self.num)[::-1] == str(self.num)
 
-    def getPalSmart(self, num, headP=0):
-        '''
-        num - list of ints
-        get smaller next front half and then put it onto the last half in reverse
-        e.g. 17 -> next smallest front half is 2. put 2 into second half ---> 22
-        '''
-        # print(num)
-        if headP >= len(num) // 2:
-            print(''.join([str(i) for i in num]))
-            return
-        if num[headP] != num[-1 - headP] and num[headP] > num[-1 - headP]:
-            num[-1 - headP] = num[headP]
-        elif num[headP] != num[-1 - headP] and num[-1 - headP] > num[headP]:
-            num[headP] += 1  # e.g. 17 --> 22
-            num[-1 - headP] = num[headP]
-
-        self.getPalSmart(num, headP + 1)
-
-    def getPalNaive(self):
-        while self.isPalindrome2() == False:
-            self.num += 1
-        return self.num
-
-def checkPal():
-    num = int(input())
-    pal = Palindrome(num)
-    # dumb version
-    start = time.time()
-    res = pal.getPalNaive()
-    end = time.time()
-    print(res, end - start)
-    # smarter version
-    num += 1
-    num = [int(x) for x in str(num)]
-    pal.getPalSmart(num)
-
-def main():
-    checkPal()
-    #pass
-
-if __name__ == '__main__':
-    main()
+num = int(input())
+num += 1
+num = [int(x) for x in str(num)]
+print(getPal(num))
