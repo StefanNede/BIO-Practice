@@ -68,7 +68,7 @@ def ExtractResultAtPos(results, pos):
     for resultIndex in range(len(results)-1,-1,-1):
         result = results[resultIndex]
         rem = pos % len(result)
-        print(resultIndex, result, rem)
+        #print(resultIndex, result, rem)
         finalStr += result[rem]
         if pos != 0:
             pos = (pos - rem) // len(result)
@@ -107,21 +107,21 @@ inputs = [  ["cabd",5,"BCAA"],
 
 question = inputs[0]
 result = GetList(question[0], question[1])
-print(result)
+#print(result)
 
 
 #layout = 'Input: {:<30}\tTarget: {:<18}\tCode result:{:<18}\t\tTime:{:>7.2f}'
-#layout = '{:<35}{:<24}{:<18}{:<7}{:<5}'
-#print(layout.format ("Input","Target","Code result","Time","Correct?"))
-#for question in inputs:
-#    start = time.time()
-#    result = GetList(question[0],question[1])
-#    if question[2].strip() == result.strip():
-#        correct = "True"
-#    else:
-#        correct = "False"
-#    print(layout.format (question[0] + ", " + str(question[1]), 
-#                        question[2], 
-#                        result, 
-#                        time.time() - start,
-#                        correct))
+layout = '{:<35}{:<24}{:<18}{:<7}{:<5}'
+print(layout.format ("Input","Target","Code result","Time","Correct?"))
+for question in inputs:
+    start = time.time()
+    result = GetList(question[0],question[1])
+    if question[2].strip() == result.strip():
+        correct = "True"
+    else:
+        correct = "False"
+    print(layout.format (question[0] + ", " + str(question[1]), 
+                        question[2], 
+                        result, 
+                        time.time() - start,
+                        correct))
