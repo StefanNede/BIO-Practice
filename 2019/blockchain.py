@@ -26,7 +26,7 @@ def getCanBeAdded(string:str, letter:str, leftToAdd:str) -> int:
     # further optimisation allows us to stop extra recursions when we know 
     # they are 'doomed' - if the smallest is less than the letter and one of the
     # letters left to be added is greater than the letter that was just added then we know 
-    # no blockchains can start with string+letter (the params in this function)
+    # no blockchains can start with string+letter (the params in this function) because that future letter must be added at some point
     # this allows us to get some of the 2 markers
     if smallest < letter:
         for char in leftToAdd:
@@ -37,7 +37,7 @@ def getCanBeAdded(string:str, letter:str, leftToAdd:str) -> int:
 
 def getPermutations(l:int, p:str, lettersLeft:str) -> int:
     '''
-    uses DFS - not good but meh
+    uses DFS but cuts out some branches by anticipating them failing later on - not good but meh
     '''
     # print(p)
     if len(p) == l:
