@@ -1,79 +1,60 @@
 # BIO round 1 2019 q3 - 
-# not necessarily adjacent 
+# not necessarily adjacent - ffs 
 import string
 
-alpha = string.ascii_lowercase
-perms = 0
+alpha:str = string.ascii_uppercase # string of lowercase alphabet 
 
-def getLettersLeftToPermute(l, p):
+def getLettersLeftToPermute(l:int, p:str) -> str:
     res = [i for i in alpha[:l] if i not in p]
     return ''.join(res)
 
-def isLastGreater(last, letters):
+# ERROR HERE - CADB should return 2 but returns 3 because D and B are after A
+def getIncreasingLetterCount(string:str) -> int:
     '''
-    is the last char in the leftmost letters greater than at least one of the letters left to permute
+    a string can have more than one set of increasing alphabetical letters e.g. BCAD has BC and AD and BCD
+    we can stop if one of the counts is 3 because the rest of the algorithm wouldn't continue anyway
+
+    count initialised to 1
+
+    e.g. BCAD => {B:3, C:2, A:2, D:0}
     '''
-    for l in letters:
-        if l < last:
-            return True
-    return False
+    count = 1
+    counts = [] # int array
+    for i in range(len(string)):
+        for j in range(i, len(string)):
+            if string[i] < string[j]:
+                count += 1
+            if count == 3:
+                # the algorithm wouldn't continue anyway 
+                return 3
+                break
+        counts.append(count)
+        count = 1
 
-def getLettersBefore(p, letters):
-    '''
-    p: string
-    letters: string
+    return max(counts)
 
-    returns the letters that come before p alphabetically
-    p = A, letters = BD => ''
-    p = B, letters = AD => 'A'
-    '''
-    res = ''
-    for l in letters:
-        if l < p:
-            res += l
-    return res
-
-def getAdjacentLetterCount(string):
-    res = 0
-    previous = string[0]
-    for l in string:
-        if l > previous:
-            res += 1
-        else:
-            res = 0
-        prevous = l
-    return res
-
-def getPermutations(l, p, lettersLeft):
-    global perms
-    adjacentLetterCount = getAdjacentLetterCount(p)
-    
+def getPermutations(l:int, p:str, lettersLeft:str) -> int:
+    # print(p)
     if len(p) == l:
         return 1
-    elif adjacentLetterCount >= 3:
-        return 0 
-    elif len(lettersLeft) < 3 and isLastGreater(p[-1], lettersLeft):
-        return 2
     
-    elif len(lettersLeft) < 3 and not isLastGreater(p[-1],lettersLeft):
-        lettersBefore = getLettersBefore(p[-1], lettersLeft)
-        if p[-2] < p[-1]:
-            print("Im crying rn")
-        else:
-            if lettersBefore == '':
-                # if both the letters are later then one has to be later than the other so we can return 1
-                return 1
-            else:
-                # otherwise there will be 2 permutations possible
-                return 2
-    else:
-        for letter in lettersLeft:
-            p = p+letter
-            adjacentLeterCount = getAdjacentLetterCount(p)
-            return perms + getPermutations(l, p, lettersLeft.replace(letter,''))
+    perms = 0
 
-inp = input().split(" ")
+    for letter in lettersLeft:
+        lettersLeft = lettersLeft.replace(letter, '') 
+        # print(f"Letters left: {lettersLeft}")
+        increasingLetterCount = getIncreasingLetterCount(p + letter)
+        # print(f"Increasing letter count: {increasingLetterCount}")
+        # we can add the letter to the string if adding doesn't put the increasing letter count at 3
+        if increasingLetterCount <=2:
+            perms += getPermutations(l, p + letter, lettersLeft)
+        lettersLeft += letter # need to start again with the original lettersLeft
+
+    return perms
+
+inp:list = input().split(" ")
 l, p = int(inp[0]), inp[1]
-lettersLeft = getLettersLeftToPermute(l,p)
+lettersLeft:str = getLettersLeftToPermute(l,p)
+# print(getIncreasingLetterCount('CABD'))
 
 print(getPermutations(l, p, lettersLeft))
