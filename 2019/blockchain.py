@@ -1,6 +1,6 @@
-# BIO round 1 2019 q3 - 
-# not necessarily adjacent - ffs 
-import string
+# BIO round 1 2019 q3 - 18/24 marks - takes too long for 3 cases with most perms
+# 3b - 2/2 marks ez
+import string, time
 
 alpha:str = string.ascii_uppercase # string of lowercase alphabet 
 
@@ -8,32 +8,37 @@ def getLettersLeftToPermute(l:int, p:str) -> str:
     res = [i for i in alpha[:l] if i not in p]
     return ''.join(res)
 
-# ERROR HERE - CADB should return 2 but returns 3 because D and B are after A
-def getIncreasingLetterCount(string:str) -> int:
+def getCanBeAdded(string:str, letter:str, leftToAdd:str) -> int:
+    # the key to this question is this function working efficiently 
     '''
-    a string can have more than one set of increasing alphabetical letters e.g. BCAD has BC and AD and BCD
-    we can stop if one of the counts is 3 because the rest of the algorithm wouldn't continue anyway
+    get the smallest char that appears in the original string, and if 
+    when iterating a later char is after this and the letter to be added is 
+    also after this and alphabetically before the later char then a string of 
+    3 increasing chars will exist so return false
+    '''    
+    smallest = None
+    for char in string:
+        if smallest is None or char < smallest:
+            smallest = char
+        elif smallest < char and char < letter:
+            return False
 
-    count initialised to 1
+    # further optimisation allows us to stop extra recursions when we know 
+    # they are 'doomed' - if the smallest is less than the letter and one of the
+    # letters left to be added is greater than the letter that was just added then we know 
+    # no blockchains can start with string+letter (the params in this function)
+    # this allows us to get some of the 2 markers
+    if smallest < letter:
+        for char in leftToAdd:
+            if letter < char:
+                return False
 
-    e.g. BCAD => {B:3, C:2, A:2, D:0}
-    '''
-    count = 1
-    counts = [] # int array
-    for i in range(len(string)):
-        for j in range(i, len(string)):
-            if string[i] < string[j]:
-                count += 1
-            if count == 3:
-                # the algorithm wouldn't continue anyway 
-                return 3
-                break
-        counts.append(count)
-        count = 1
-
-    return max(counts)
+    return True
 
 def getPermutations(l:int, p:str, lettersLeft:str) -> int:
+    '''
+    uses DFS - not good but meh
+    '''
     # print(p)
     if len(p) == l:
         return 1
@@ -43,10 +48,10 @@ def getPermutations(l:int, p:str, lettersLeft:str) -> int:
     for letter in lettersLeft:
         lettersLeft = lettersLeft.replace(letter, '') 
         # print(f"Letters left: {lettersLeft}")
-        increasingLetterCount = getIncreasingLetterCount(p + letter)
+        canBeAdded = getCanBeAdded(p, letter, lettersLeft)
         # print(f"Increasing letter count: {increasingLetterCount}")
         # we can add the letter to the string if adding doesn't put the increasing letter count at 3
-        if increasingLetterCount <=2:
+        if canBeAdded:
             perms += getPermutations(l, p + letter, lettersLeft)
         lettersLeft += letter # need to start again with the original lettersLeft
 
@@ -55,6 +60,10 @@ def getPermutations(l:int, p:str, lettersLeft:str) -> int:
 inp:list = input().split(" ")
 l, p = int(inp[0]), inp[1]
 lettersLeft:str = getLettersLeftToPermute(l,p)
-# print(getIncreasingLetterCount('CABD'))
+# print(getCanBeAdded('CAD', 'B', ''))
 
-print(getPermutations(l, p, lettersLeft))
+start = time.time()
+res = (getPermutations(l, p, lettersLeft))
+end = time.time()
+
+print(res, end-start)
