@@ -130,4 +130,38 @@ class DPSolution:
 
         return max(prev1, house1)
 
+    def deleteAndEarn(self, nums: [int]) -> int:
+        '''
+        MEDIUM
+        You are given an integer array nums. You want to maximize the number of points you get by performing the following operation any number of times:
+        Pick any nums[i] and delete it to earn nums[i] points. Afterwards, you must delete every element equal to nums[i] - 1 and every element equal to nums[i] + 1.
+        Return the maximum number of points you can earn by applying the above operation some number of times.
+
+        e.g. input: nums = [3,4,2]
+        output: 6
+        delete 4 to earn 4 points => this gets rid of 3
+        delete 2 to earn 2 points
+        '''
+
+        if len(nums) == 0:
+            return 0
+        # can be simplified to the rob problem by creating an array which holds the sum of each
+        nums.sort()
+        numsNoRepeat = list(dict.fromkeys(nums))
+        rob = []
+        rob = [0] * (nums[-1] + 1)
+        for n in numsNoRepeat:
+            rob[n] = nums.count(n) * n
+        # from here it is the robbers problem using rob as the array - not being able to pick
+        # adjacent values works because if 2 values are next to each other in index they won't
+        # be picked
+
+        prev1 = 0
+        prev2 = 0
+        for value in rob:
+            temp = prev1
+            prev1 = max(value + prev2, prev1)
+            prev2 = temp
+        return prev1
+
 # s = DPSolution()
