@@ -52,4 +52,82 @@ class DPSolution:
         print(dp)
         return min(dp[0], dp[1])
 
+    # recursive + memo - top down
+    memo = []
+    def helper(self, nums, i):
+        if i >= len(nums):
+            return 0
+        if self.memo[i] != -1:
+            return self.memo[i]
+        res = max(nums[i] + self.helper(nums, i + 2), self.helper(nums, i + 1))
+        self.memo[i] = res
+        return self.memo[i]
+
+    def robWithMemo(self, nums):
+        self.memo = [-1] * len(nums)
+        return self.helper(nums, 0)
+
+    # iterative + N variables - bottom up (the better solution)
+    def rob(self, nums: [int]) -> int:
+        '''
+        MEDIUM
+        You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+        Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.
+
+        e.g. input: nums[2,3,2]
+        output: 4
+        '''
+        if len(nums) == 0:
+            return 0
+        # order: prev2, prev1, nums[i]
+        prev1 = 0
+        prev2 = 0
+        for i in range(len(nums)):
+            temp = prev1
+            prev1 = max(prev2 + nums[i], prev1)  # prev1 will become nums[i] when i moves on
+            prev2 = temp
+        return prev1
+
+    def rob2(self, nums: [int]) -> int:
+        '''
+        MEDIUM
+        You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. All houses at this place are arranged in a circle. That means the first house is the neighbor of the last one. Meanwhile, adjacent houses have a security system connected, and it will automatically contact the police if two adjacent houses were broken into on the same night.
+        Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.
+
+        e.g. input: nums = [2,3,2]
+        output: 3
+        You cannot rob house 1 and then house 3
+
+        hint: as the first and last house are adjacent the problem can be split into two:
+        - rob the 1st house and then see what you can rob excluding the last house
+        - rob the 2nd house and then see what you can rob including the last house
+        now these sub-problems are just rob1 so have already been solved
+        '''
+        if len(nums) == 0:
+            return 0
+
+        if len(nums) == 1:
+            return nums[0]
+        prev1 = 0
+        prev2 = 0
+
+        house1 = 0
+
+        # this finds the greatest value when robbing house 1
+        for i in range(len(nums) - 1):
+            temp = prev1
+            prev1 = max(prev2 + nums[i], prev1)
+            prev2 = temp
+
+        house1 = prev1
+        prev1, prev2 = 0, 0
+
+        # this finds the greatest value when robbing house 2
+        for i in range(1, len(nums)):
+            temp = prev1
+            prev1 = max(prev2 + nums[i], prev1)
+            prev2 = temp
+
+        return max(prev1, house1)
+
 # s = DPSolution()
