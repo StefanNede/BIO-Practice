@@ -1,5 +1,5 @@
-# 2021 round 1 q3 - 20/24 
-from collections import deque 
+# 2021 round 1 q3 - 24/24 
+from collections import deque, defaultdict 
 import string
 
 ALPHA = string.ascii_lowercase
@@ -19,14 +19,14 @@ def solve(target):
     warehouse = ALPHA[:len(target)]
     target = list(target)
     queue = deque([(list(),0)])
-    visited = []
+    visited = defaultdict(lambda:False)
     
     # if the target is in alphabetical order the shortest number of steps is just to add n times where n is length of target
     if sorted(target) == target:
         return len(target)
 
     while queue:
-        print(queue)
+        # print(queue)
         currentDisplay, steps = queue.popleft()
         
         if currentDisplay == target:
@@ -38,25 +38,25 @@ def solve(target):
         if len(currentDisplay) < len(warehouse):
             addedDisplay = currentDisplay + [warehouse[len(currentDisplay) - len(warehouse)]] 
             if addedDisplay == target: return steps+1
-            if addedDisplay not in visited:
+            if visited[''.join(addedDisplay)] == False:
                 queue.append((addedDisplay, steps+1))
-                visited.append(addedDisplay)
+                visited[''.join(addedDisplay)] = True
         
         # swap - can only do this if the length is 2+
         if len(currentDisplay) >= 2:
             swappedDisplay = [currentDisplay[1], currentDisplay[0]] + currentDisplay[2:]
             if swappedDisplay == target: return steps+1
-            if swappedDisplay not in visited:
+            if visited[''.join(swappedDisplay)] == False:
                 queue.append((swappedDisplay, steps+1))
-                visited.append(swappedDisplay)
+                visited[''.join(swappedDisplay)] = True
 
         # rotate - can only do this if the length is 3+ because swapping and rotating at length 2 is the same  
         if len(currentDisplay) >= 3:
             rotatedDisplay = currentDisplay[1:] + [currentDisplay[0]]
             if rotatedDisplay == target: return steps+1
-            if rotatedDisplay not in visited:
+            if visited[''.join(rotatedDisplay)] == False:
                 queue.append((rotatedDisplay, steps+1))
-                visited.append(rotatedDisplay)
+                visited[''.join(rotatedDisplay)] = True
 
     return "Impossible" 
 
