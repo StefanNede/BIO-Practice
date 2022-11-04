@@ -1,4 +1,5 @@
 # 2010 BIO round 1 q3 - full marks
+# 3b - fill b, pour from b into a, empty a, pour from b into a, left with 2 in b - 2 marks
 from collections import defaultdict, deque
 
 def solve(noJ, target, capacities):
