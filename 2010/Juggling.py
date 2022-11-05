@@ -32,7 +32,6 @@ def solve(noJ, target, capacities):
                     queue.append((newJugs, steps+1))
                     visited[''.join([str(l) for l in newJugs])] = True
 
-            # NOT WORKING
             # pour as much liquid from one jug to another - need another for loop to go through all other jug
             # but we need to maintain the order of the jugs  
             leftJugs = jugs[:i]
