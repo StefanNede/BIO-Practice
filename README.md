@@ -17,7 +17,7 @@ solutions to a range of competitive programming problems
 | 2018 	| ✅  	|    	|    	|
 | 2019 	| ✅  	| ✅  	| ✅  	|
 | 2020 	|    	|    	|    	|
-| 2021 	| 〰️ 	|    	| ✅  	|
+| 2021 	| ✅ 	|    	| ✅  	|
 | 2022 	| ✅  	| 〰️ 	| ✅  	|
 
 ## CSES problems solved 
