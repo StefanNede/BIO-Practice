@@ -1,3 +1,6 @@
+# BIO-Practice
+solutions to a range of competitive programming problems
+
 ## BIO problems solved
 | year 	| q1 	| q2 	| q3 	|
 |------	|----	|----	|----	|
@@ -21,9 +24,9 @@
 - spiral
 
 ## Leetcode problems solved
-> DP problems
-    - climb stairs
-    - min cost climbing stairs
-    - rob
-    - rob2
-    - delete and earn
+### DP problems
+ - climb stairs
+ - min cost climbing stairs
+ - rob
+ - rob2
+ - delete and earn
