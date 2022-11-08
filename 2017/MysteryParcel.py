@@ -1,5 +1,5 @@
 # BIO round 1 q3 2017 - 25/25
-from functools import lru_cache, cache
+from functools import cache
 
 @cache
 def weightCombinations(numberOfItems, maxWeight, weightOfParcel):
