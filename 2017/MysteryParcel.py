@@ -10,7 +10,7 @@ def weightCombinations(numberOfItems, maxWeight, weightOfParcel):
         return 0
     # go over each possible weight
     # the maxWeight gets set to i because otherwise we would get duplicate solutions, such as:
-    # 1 1 2 and 1 2 1
+    # 2 1 1 and 1 2 1 and 1 1 2
     return sum([weightCombinations(numberOfItems-1, i, weightOfParcel-i) for i in range(1, maxWeight+1)])
 
 @cache
