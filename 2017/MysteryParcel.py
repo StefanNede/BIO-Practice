@@ -17,7 +17,7 @@ def weightCombinations(numberOfItems, maxWeight, weightOfParcel):
 def itemCombinations(numParcels:int,maxWeight:int, numberOfItems:int, weightOfParcel:int):
     '''gives psbs for how to distribute items across number of parcels'''
     # cache used because in the for loop at the end there can be duplicates 
-    # e.g. 0 3 1 3 -> 0 3 0 3 but 1 3 1 3 -> 0 3 1 3 also
+    # e.g. 0 3 1 3 -> 0 3 0 3 but 1 3 1 3 -> 0 3 0 3 also
     print(numParcels,maxWeight, numberOfItems, weightOfParcel)
     if numParcels == 0 and numberOfItems == 0:
         # for example if the function before this is left with 1 parcel and 3 items
