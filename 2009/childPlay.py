@@ -1,10 +1,8 @@
 # BIO round 1 q3 - 17/23
-from functools import lru_cache 
 import time
 
 res = []
 
-@lru_cache(maxsize=None)
 def solve(s, nums):
     # dfs solution
     global res
