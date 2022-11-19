@@ -3,6 +3,7 @@ import string
 from collections import defaultdict
 
 ALPHA  = list(string.ascii_uppercase)
+
 # each room identifiede by a single letter
 # each exit form a room marked with the letter identifying the room to which it is connected
 class Room:
@@ -19,27 +20,57 @@ class Spy:
     def __init__(self):
         self.roomsVisited = []
     
-# to make map:
-#       - choose first room alphabetically which has noy yet been chosen and which is not in the plan
-#               chosen room connected to the first room in the plan
-#               then first room removed from the plan
-#       - above step repeated until plan is empty
-#       - there will be 2 rooms which have not yet been chosen => connect them together so each room has an exit to the other room
 class Map:
     def __init__(self, plan):
-        self.plan = plan
+        self.plan = list(plan)
+        self.roomsLeft = ALPHA[:len(plan)+2]
+        self.map = defaultdict(lambda:[]) # this will be a sort of tree 
+    
+    def getRoomsNotInPlan(self) -> list:
+        res = []
+        for room in self.roomsLeft:
+            if room not in self.plan:
+                res.append(room)
+        return res
 
     def makeMap(self):
-        pass
+        # update self.map
+        roomsNotPlan = self.getRoomsNotInPlan()
+        while len(self.plan) > 0:
+            r = roomsNotPlan.pop(0)
+            self.roomsLeft.remove(r)
+            firstPlanRoom = self.plan.pop(0) # get first room in plan and remove it from plan
+            # create connections
+            if len(self.map[r]) == 0:
+                self.map[r] = firstPlanRoom 
+            else:
+                self.map[r] = self.map[r] + [firstPlanRoom]
+            
+            # add to roomsNotPlan if they have not already been chosen and are no longer in the plan
+            if len(self.map[firstPlanRoom]) == 0 and firstPlanRoom not in self.plan:
+                roomsNotPlan.append(firstPlanRoom)
+                roomsNotPlan.sort()
+        
+        # rooms never chosen - self.roomsLeft
+        room1, room2 = self.roomsLeft[0], self.roomsLeft[1]
+        # create connection
+        if len(self.map[room1]) == 0:
+            self.map[room1] = room2 
+        else:
+            self.map[room1] = self.map[room2] + [firstPlanRoom]
+    
+    def getMap(self) -> dict:
+        self.makeMap()
+        return self.map
 
 # at start they have visited their starting room an odd number of times, each other even 
 class Game:
-    def __init__(self, roomsId, move1, move2):
-        self.roomsId = roomsId
+    def __init__(self, plan, move1, move2):
         self.rooms = self.createRooms()
         self.move1 = move1
         self.move2 = move2
-        self.map = Map(roomsId)
+        self.map = Map(plan)
+        self.map = self.map.getMap() # will be a defaultdict
     
     def createRooms(self):
         lst = []
@@ -62,9 +93,9 @@ class Game:
         
 
 def main():
-    rooms, p, q = [i for i in input().split()]
+    plan, p, q = [i for i in input().split()]
     p, q = int(p), int(q)
-    game = Game(rooms, p, q)
+    game = Game(plan, p, q)
 
 if __name__ == "__main__":
     main()
