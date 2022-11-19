@@ -22,9 +22,12 @@ class Spy:
     
 class Map:
     def __init__(self, plan):
+        self.planLen = len(plan) # for use later
         self.plan = list(plan)
-        self.roomsLeft = ALPHA[:len(plan)+2]
-        self.map = defaultdict(lambda:[]) # this will be a sort of tree 
+        self.roomsLeft = ALPHA[:self.planLen+2]
+        self.map = defaultdict(lambda:"")
+        self.invertedMap = defaultdict(lambda:"")
+        self.resMap = defaultdict(lambda:[]) 
     
     def getRoomsNotInPlan(self) -> list:
         res = []
@@ -44,7 +47,7 @@ class Map:
             if len(self.map[r]) == 0:
                 self.map[r] = firstPlanRoom 
             else:
-                self.map[r] = self.map[r] + [firstPlanRoom]
+                self.map[r] = self.map[r] + firstPlanRoom
             
             # add to roomsNotPlan if they have not already been chosen and are no longer in the plan
             if len(self.map[firstPlanRoom]) == 0 and firstPlanRoom not in self.plan:
@@ -57,16 +60,30 @@ class Map:
         if len(self.map[room1]) == 0:
             self.map[room1] = room2 
         else:
-            self.map[room1] = self.map[room2] + [firstPlanRoom]
+            self.map[room1] = self.map[room2] + firstPlanRoom
+    
+    def getInvertedMap(self):
+        for key, val in dict(self.map).items():
+            for v in val:
+                if len(self.invertedMap[v]) == 0:
+                    self.invertedMap[v] = key 
+                else:
+                    self.invertedMap[v] = self.invertedMap[v] + key 
     
     def getMap(self) -> dict:
         self.makeMap()
-        return self.map
+        self.getInvertedMap() # the keys are the values and values are the keys
+        # format the map -> if C is connected to A and A is connected to E then A is connected to C and E
+        # compile map and invertedMap
+        for room in ALPHA[:self.planLen+2]:
+            self.resMap[room] = sorted(self.map[room] + self.invertedMap[room])
+
+        return self.resMap 
 
 # at start they have visited their starting room an odd number of times, each other even 
 class Game:
     def __init__(self, plan, move1, move2):
-        self.rooms = self.createRooms()
+        #self.rooms = self.createRooms()
         self.move1 = move1
         self.move2 = move2
         self.map = Map(plan)
@@ -96,6 +113,8 @@ def main():
     plan, p, q = [i for i in input().split()]
     p, q = int(p), int(q)
     game = Game(plan, p, q)
+    for room in game.map:
+        print("".join(game.map[room]))
 
 if __name__ == "__main__":
     main()
