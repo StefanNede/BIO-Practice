@@ -1,25 +1,9 @@
-# BIO round 1 2020 q2
+# BIO round 1 2020 q2 - 24/24
 import string
 from collections import defaultdict
 
 ALPHA  = list(string.ascii_uppercase)
 
-# each room identifiede by a single letter
-# each exit form a room marked with the letter identifying the room to which it is connected
-class Room:
-    def __init__(self, letter):
-        self.letter = letter
-
-# for each room they keep track of whether they have visited it an even or odd number of times
-# visited room odd num times => leave through the exit which is marked with the first letter alphabetically
-# even num times => find first exit alphabetically that have left through odd num times
-#                       WHILE LOOP
-#                       if is last exit alphabetically in this room they will leave through it
-#                       otherwise leave through next exit alphabetically
-class Spy:
-    def __init__(self):
-        self.roomsVisited = []
-    
 class Map:
     def __init__(self, plan):
         self.planLen = len(plan) # for use later
@@ -82,21 +66,45 @@ class Map:
 
 # at start they have visited their starting room an odd number of times, each other even 
 class Game:
-    def __init__(self, plan, move1, move2):
-        #self.rooms = self.createRooms()
-        self.move1 = move1
-        self.move2 = move2
+    def __init__(self, plan):
+        self.visitedRooms = defaultdict(lambda:0)
+        self.visitedRooms['A'] = 1 # visited starting room odd num times
+        # for each room keep track of the exits used
+        self.visitedExits = defaultdict(lambda:defaultdict(lambda:0))
+        self.currentRoom = "A"
         self.map = Map(plan)
         self.map = self.map.getMap() # will be a defaultdict
     
-    def createRooms(self):
-        lst = []
-        for roomId in self.roomsId:
-            room = Room(room)
-            lst.append(room)
-        lst.sort()
-        return lst
+    def move(self):
+       self.getNextExit() 
     
+    def getNextExit(self):
+        exits = self.map[self.currentRoom]
+        if len(exits) == 1:
+            self.visitedExits[self.currentRoom][exits[0]] += 1
+            self.currentRoom = exits[0]
+            self.visitedRooms[self.currentRoom] += 1
+        elif self.visitedRooms[self.currentRoom]%2 == 1:
+            # leave through first exit alphabetically
+            self.visitedExits[self.currentRoom][exits[0]] += 1
+            self.currentRoom = exits[0]
+            self.visitedRooms[self.currentRoom] += 1
+        else:
+            for e in exits:
+                if self.visitedExits[self.currentRoom][e]%2 == 1:
+                    if e == exits[-1]:
+                        self.visitedExits[self.currentRoom][e] += 1
+                        self.currentRoom = e
+                        self.visitedRooms[self.currentRoom] += 1
+                    else:
+                        # leave through next exit alphabetically
+                        eIndex = exits.index(e)+1
+                        e = exits[eIndex]
+                        self.visitedExits[self.currentRoom][e] += 1
+                        self.currentRoom = e
+                        self.visitedRooms[self.currentRoom] += 1
+                    break
+
     def getNextAlphabetical(self, currentPtr):
         ptr = currentPtr
         room = ''
@@ -107,14 +115,19 @@ class Game:
             # otherwise continue
             ptr += 1
         return room
-        
-
+    
 def main():
     plan, p, q = [i for i in input().split()]
     p, q = int(p), int(q)
-    game = Game(plan, p, q)
+    game = Game(plan)
+
+    # outputs
     for room in game.map:
         print("".join(game.map[room]))
+    for i in range(p): game.move()
+    print(game.currentRoom, end="")
+    for j in range(q-p): game.move()
+    print(game.currentRoom)
 
 if __name__ == "__main__":
     main()
