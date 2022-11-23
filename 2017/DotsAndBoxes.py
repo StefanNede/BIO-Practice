@@ -1,32 +1,37 @@
-# BIO round 1 q2 2017 -
-# current issue:
-# horizontal edges seem to be correct but vertical edges not
+# BIO round 1 q2 2017 - 24/24
+# initially forgot to consider that after winning a square the player gets another turn 
 
 class Game:
-    def __init__(self, positionX, positionY, modifierX, modifierY):
+    def __init__(self, positionX, positionY, modifierX, modifierY, turns):
         self.outputGrid = [['*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*'], ['*', '*', '*', '*', '*']]
-        self.vEdges = [0]*5*6
-        self.hEdges = [0]*5*6
+        self.vEdges = [0]*30
+        self.hEdges = [0]*30
         self.positionX = positionX-1
         self.positionY = positionY-1
         self.modifierX = modifierX
         self.modifierY = modifierY
+        self.turns = turns
         self.xSquares = 0
         self.ySquares = 0
+        self.nextTurn = "X"
 
     def moveX(self):
         self.positionX += self.modifierX
         self.positionX %= 36
+        self.nextTurn = "Y"
         while not self.canMakeEdge("X"):
             self.positionX += 1
             self.positionX %= 36
+        self.turns -= 1
     
     def moveY(self):
         self.positionY += self.modifierY
         self.positionY %= 36
+        self.nextTurn = "X"
         while not self.canMakeEdge("Y"):
             self.positionY += 1
             self.positionY %= 36
+        self.turns -= 1
     
     def isAvailable(self, position, direction:str, player:str):
         # returns true if the position at the coordinate given is empty
@@ -39,6 +44,15 @@ class Game:
                 # update vertical 
                 self.vEdges[vEdge] = 1
                 # call self.squareCreated()
+                self.squareCreated(position, player)
+                return True
+
+        elif direction == "down":
+            if position > 29: return False
+            vEdge = position
+            if self.vEdges[vEdge] == 0:
+                # update vertical
+                self.vEdges[vEdge] = 1
                 self.squareCreated(position, player)
                 return True
 
@@ -57,15 +71,6 @@ class Game:
             if self.hEdges[hEdge] == 0:
                 # update horizontal
                 self.hEdges[hEdge] = 1
-                self.squareCreated(position, player)
-                return True
-
-        else:
-            if position > 29: return False
-            vEdge = position
-            if self.vEdges[vEdge] == 0:
-                # update vertical
-                self.vEdges[vEdge] = 1
                 self.squareCreated(position, player)
                 return True
 
@@ -93,8 +98,8 @@ class Game:
             return False
 
     def getSquareAroundGridSpace(self, gridSpace):
-        vEdgeLeft = gridSpace
-        vEdgeRight = gridSpace + 1
+        vEdgeLeft = gridSpace + gridSpace//5
+        vEdgeRight = vEdgeLeft + 1
         hEdgeTop = gridSpace
         hEdgeBottom = gridSpace + 5
         return self.vEdges[vEdgeLeft] == 1 and self.vEdges[vEdgeRight] == 1 and self.hEdges[hEdgeTop] == 1 and self.hEdges[hEdgeBottom] == 1
@@ -113,8 +118,10 @@ class Game:
             if self.outputGrid[xCoor][yCoor] == "*" and self.getSquareAroundGridSpace(posLooking):
                 self.outputGrid[xCoor][yCoor] = indicator
                 if player == "X":
+                    self.nextTurn = "X" # give X another turn
                     self.xSquares += 1
                 else:
+                    self.nextTurn = "Y" # give Y another turn
                     self.ySquares += 1
             posLooking += 1
 
@@ -125,20 +132,12 @@ class Game:
 
 def main():
     positionX, modifierX, positionY, modifierY, turns = [int(i) for i in input().split(" ")]
-    g = Game(positionX, positionY, modifierX, modifierY)
-    for i in range(turns//2):
-        g.moveX()
-        g.moveY()
-        # print(g.positionX)
-        # print(g.positionY)
-        # print(str(i) + " vertical edges: ")
-        # print(g.vEdges)
-        # print(str(i) + "horizontal edges: ")
-        # print(g.hEdges)
-    if turns%2 == 1:
-        g.moveX()
-    print(g.vEdges)
-    print(g.hEdges)
+    g = Game(positionX, positionY, modifierX, modifierY, turns)
+    while g.turns > 0:
+        if g.nextTurn == "X":
+            g.moveX()
+        else:
+            g.moveY()
     g.outputResGrid()
     print(g.xSquares, end=" ")
     print(g.ySquares)
