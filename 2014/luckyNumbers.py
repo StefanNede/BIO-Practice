@@ -1,9 +1,8 @@
 # BIO round 1 q1 - 25/25
-# longest test case takes 1.02 seconds but for this paper it says 2 seconds is the limit
 
 def solve(n):
     odds = [1]
-    for i in range(n*2): odds.append(odds[-1] + 2)
+    for i in range(n+50): odds.append(odds[-1] + 2)
 
     previousLucky = 0
     index = 1 # to ignore the 1
