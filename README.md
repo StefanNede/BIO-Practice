@@ -4,7 +4,7 @@ solutions to a range of competitive programming problems
 ## BIO problems solved
 | year 	| q1 	| q2 	| q3 	|
 |------	|----	|----	|----	|
-| 2007 	| ✅   	|    	| 〰️ 	|
+| 2007 	| ✅   	|    	| ✅	|
 | 2008 	| ✅   	|    	| ✅ 	|
 | 2009 	| ✅  	|    	| ✅  	|
 | 2010 	| ✅ 	|     | ✅  	|
