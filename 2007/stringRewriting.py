@@ -36,8 +36,6 @@ def main():
     so = Solve(string, p)
     for i in range(s):
         so.rewrite()
-    print(so.string)
-    print(len(so.string))
     res = so.getNumOccurences()
     for r in res:
         print(r, end=" ")
