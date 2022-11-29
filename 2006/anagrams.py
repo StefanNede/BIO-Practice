@@ -1,6 +1,7 @@
 # BIO round 1 q1 - 24/24
 
 def solve(w1, w2):
+    # could've sorted both and checked if they were the same LOL
     remaining = list(w2)
     for letter in w1:
         try:
