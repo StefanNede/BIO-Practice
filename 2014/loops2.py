@@ -1,6 +1,7 @@
 # BIO round 1 q2 - 
 from collections import defaultdict, deque
 # i overcomplicated it in the previous attempt 
+# a difficulty is getting the score for a loop
 
 class Game:
     def __init__(self, size, rows):
