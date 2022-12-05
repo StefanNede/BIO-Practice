@@ -20,7 +20,7 @@ solutions to a range of competitive programming problems
 | 2019 	| ✅  | ✅  	| ✅  	|
 | 2020 	| ✅  | ✅  	|    	|
 | 2021 	| ✅ 	|    	| ✅  	|
-| 2022 	| ✅  	| 〰️ 	| ✅  	|
+| 2022 	| ✅  	| ✅ 	| ✅  	|
 
 ## CSES problems solved 
 - spiral
