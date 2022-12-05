@@ -1,6 +1,4 @@
-# BIO round 1 2022 q2 - 11/27
-# skirmishes working
-# feud not started
+# BIO round 1 2022 q2 - 27/27
 
 class Game:
     def __init__(self, rJump, bJump):
@@ -12,11 +10,11 @@ class Game:
         self.bEdge = [5, 24] # starts facing edge 6 on the last hexagon
         self.grid = [["" for i in range(6)] for i in range(25)] # hold who is in charge overall
     
-    def controlsHexagon(self):
+    def controlsHexagon(self, interGrid):
         interRCount = 0
         interBCount = 0
         # gets the score for red and blue by looping over the hexagons and seeing who has more edges
-        for hexagon in self.grid:
+        for hexagon in interGrid:
             if hexagon.count("r") > hexagon.count("b"):
                 interRCount += 1
             elif hexagon.count("b") > hexagon.count("r"):
@@ -26,7 +24,13 @@ class Game:
     def takeOwnership(self, drone, edge, hexagon):
         '''changes the edge in the current hexagon and any bordering hexagons'''
         # change current hexagon
-        interGrid = self.grid
+        interGrid = []
+        # if i just write interGrid = self.grid when changing interGrid self.grid is also changed
+        for hexa in range(len(self.grid)):
+            smaller = []
+            for ed in range(6):
+                smaller.append(self.grid[hexa][ed])
+            interGrid.append(smaller)
         interGrid[hexagon][edge] = drone
 
         # change adjacent coordinate
@@ -106,11 +110,10 @@ class Game:
     
     def beforeFeud(self):
         # sets stuff up before feuds take place
-        self.rCount, self.bCount = self.controlsHexagon()
-        
+        self.rCount, self.bCount = self.controlsHexagon(self.grid)
+
     def feud(self, drone):
-        # might need to modify takeOwnership to give an intermittent grid
-        # as we are not always going to choose that grid
+        # print(self.grid)
         '''
         take ownership of preferred un-owned edge
             - the edge that gains them control over the most hexagons
@@ -119,33 +122,97 @@ class Game:
             - if still undecided - red choose lowest direction number, blue highest
         '''
         if drone == "r":
-            maxControlNum = 0
+            # stores stuff to do with gaining stuff for this drone
+            maxControlNum = -1 # so that when hexagon 0 and edge 0 is not valid it gets overriden
             maxControlEdge = 0
             maxControlHexagon = 0
-            # at most they can gain control over 2 hexagons from one edge
+
+            # stores stuff to do with taking away from other drone
+            maxRemovedNum = 0
+            maxRemovedEdge = 0
+            maxRemovedHexagon = 0
+
             for i in range(len(self.grid)):
-                cHexagon = self.grid[i]
-                # check all the adjacent hexagons where an edge could be placed (loop over edges) and if  
-                # u place edges there red count is higher than blue count for both hexagons
-                # then set maxControlNum to 2 and store edge and hexagon
-                # if this gives control over 1 edge and maxControlNum is 0 then set it to that
-                # otherwise a smaller number hexagon gave them the same control so this is preferred
-                # if no control then see if number of red edges == blue edges meaning they took away from 
-                # other drones, and store this only if maxControlNum is 0
-                for edge in range(5):
-                    pass
+                cHexagon = i
+                for edge in range(6):
+                    # can't override a blue edge and can't retake an edge
+                    if self.grid[cHexagon][edge] != "b" and self.grid[cHexagon][edge] != "r":
+                        interGrid = self.takeOwnership("r", edge, cHexagon)
+                        interRCount, interBCount = self.controlsHexagon(interGrid)
+
+                        # check the differences between the inter r and b counts with the actual self. r and b counts
+                        if interRCount - self.rCount > maxControlNum:
+                            maxControlNum = interRCount-self.rCount
+                            maxControlEdge = edge
+                            maxControlHexagon = cHexagon
+
+                            # to allow for comparisons later on if something else gives the same amount of control
+                            maxRemovedNum = abs(interBCount - self.bCount)
+                            maxRemovedEdge = edge
+                            maxRemovedHexagon = cHexagon
+                        elif interRCount - self.rCount == maxControlNum:
+                            if abs(interBCount - self.bCount) > maxRemovedNum:
+                                maxControlNum = interRCount-self.rCount
+                                maxControlEdge = edge
+                                maxControlHexagon = cHexagon
+
+                                maxRemovedNum = abs(interBCount - self.bCount)
+                                maxRemovedEdge = edge
+                                maxRemovedHexagon = cHexagon
+
+            # print("RED")
+            # print(maxControlNum, maxControlHexagon, maxControlEdge)
+            # go through preferences in order
+            interGrid = self.takeOwnership("r", maxControlEdge, maxControlHexagon)
+            self.grid = interGrid
+            interRCount, interBCount = self.controlsHexagon(self.grid)
+            self.rCount, self.bCount = interRCount, interBCount
 
         else:
-            # same method as for red but instead of only storing if nothing has been stored previously
-            # because trying to get lowest hexagon number
-            # continue to store even if a smaller hexagon gives the same outcome
-            maxControlNum = 0
+            # stores stuff to do with gaining stuff for this drone
+            maxControlNum = -1
             maxControlEdge = 0
             maxControlHexagon = 0
+
+            # stores stuff to do with taking away from other drone
+            maxRemovedNum = 0
+            maxRemovedEdge = 0
+            maxRemovedHexagon = 0
+
+            # DIFFERENCE - continue to store even if a smaller hexagon gives the same outcome
             for i in range(len(self.grid)):
-                cHexagon = self.grid[i]
-                for edge in range(5):
-                    pass
+                cHexagon = i
+                for edge in range(6):
+                    if self.grid[cHexagon][edge] != "r" and self.grid[cHexagon][edge] != "b":
+                        interGrid = self.takeOwnership("b", edge, cHexagon)
+                        interRCount, interBCount = self.controlsHexagon(interGrid)
+                        # check the differences between the inter r and b counts with the actual self. r and b counts
+                        if interBCount - self.bCount > maxControlNum:
+                            maxControlNum = interBCount-self.bCount
+                            maxControlEdge = edge
+                            maxControlHexagon = cHexagon
+
+                            maxRemovedNum = abs(interRCount - self.rCount)
+                            maxRemovedEdge = edge
+                            maxRemovedHexagon = cHexagon
+
+                        elif interBCount - self.bCount == maxControlNum:
+                            if abs(interRCount - self.rCount) >= maxRemovedNum:
+                                maxControlNum = interBCount-self.bCount
+                                maxControlEdge = edge
+                                maxControlHexagon = cHexagon
+
+                                maxRemovedNum = abs(interRCount - self.rCount)
+                                maxRemovedEdge = edge
+                                maxRemovedHexagon = cHexagon
+
+            # print("BLUE")
+            # print(maxControlNum, maxControlHexagon, maxControlEdge)
+            # go through preferences in order
+            interGrid = self.takeOwnership("b", maxControlEdge, maxControlHexagon)
+            self.grid = interGrid
+            interRCount, interBCount = self.controlsHexagon(self.grid)
+            self.rCount, self.bCount = interRCount, interBCount
 
 def main():
     rJump, bJump = [int(i) for i in input().split(' ')]
