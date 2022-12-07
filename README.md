@@ -14,7 +14,7 @@ solutions to a range of competitive programming problems
 | 2013 	|  ✅  	|    	|    	|
 | 2014 	|  ✅  	| 〰️  	| ✅  	|
 | 2015 	|  ✅  	| ✅   	| ✅ 	|
-| 2016 	|  ✅  	| ✅   	|    	|
+| 2016 	|  ✅  	| ✅   	|  ✅  	|
 | 2017 	| ✅  |   ✅ 	| ✅  	|
 | 2018 	| ✅  |  ✅  	|    	|
 | 2019 	| ✅  | ✅  	| ✅  	|
