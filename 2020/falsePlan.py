@@ -1,4 +1,4 @@
-# BIO round 1 2020 q3
+# BIO round 1 2020 q3 - 27/27
 import string, math
 from functools import lru_cache
 
@@ -27,18 +27,32 @@ def solve(numLetters, maxAdj, n):
     '''
     permute letters in modified alphabet for a res of length
     where there can only be maxAdj adjacent letters
-
-    possibly use a technique similar to modern art or parking (?)
+    use a technique similar to modern art or parking 
     because again the plans will be in alphabetical order
-
-    goal: output nth plan 
     '''
-    numWays = getWays(numLetters, maxAdj)
     res = ""
-    while len(res) != n:
-
-        pass
+    counter = 0
+    adjs = 1
+    while len(res) != numLetters:
+        currentLetter = alphabet[counter]
+        if len(res)>=1 and currentLetter == res[-1]:
+            adjs += 1
+        if len(res)>= 1 and currentLetter != res[-1]:
+            adjs = 1
+        numWays = getWays(numLetters-(len(res)+1), maxAdj, currentLetter, adjs) 
+        if adjs > maxAdj:
+            adjs = 1
+            counter += 1
+            counter %= len(alphabet)
+        elif numWays >= n:
+            res += currentLetter
+            # reset counter
+            counter = 0
+        else:
+            n -= numWays
+            counter += 1
+            counter %= len(alphabet)
     return res
 
-# print(getWays(numLetters, maxAdj))
+# print(getWays(numLetters-1, maxAdj, "A"))
 print(solve(numLetters, maxAdj, n))
