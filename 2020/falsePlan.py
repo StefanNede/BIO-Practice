@@ -1,23 +1,29 @@
 # BIO round 1 2020 q3
 import string, math
+from functools import lru_cache
 
-p, q, r = [int(i) for i in input().split(' ')]
+p, maxAdj, numLetters = [int(i) for i in input().split(' ')]
 n = int(input())
 alphabet = string.ascii_uppercase
 alphabet = list(alphabet[:p])
 
-def getTotalPsbs(maxAdj,length):
-    base = math.factorial(length)
-    # now we need to figure out a way to modify the base
-    # where length is 4 and maxAdj is 2 and alphabet is length 2
-    # the answer is 4C3 + 4C2 because you can either have 3As or 3Bs or 2As or 2Bs
-    # but i don't know how to continue from there to a formula 
-    return base
+@lru_cache(maxsize = None)
+def getWays(lettersLeft, maxAdj, lastLetter="", curAdj = 1):
+    if lettersLeft < 0 or curAdj > maxAdj:
+        return 0
+    # have reached the end of a successful run
+    elif lettersLeft == 0: 
+        return 1
+    
+    total = 0
+    for l in alphabet:
+        if l == lastLetter:
+            total += getWays(lettersLeft-1, maxAdj, l, curAdj+1)
+        else:
+            total += getWays(lettersLeft-1, maxAdj, l, 1)
+    return total
 
-def getPsbsStarting(start, length):
-    return 
-
-def solve(maxAdj,length,n):
+def solve(numLetters, maxAdj, n):
     '''
     permute letters in modified alphabet for a res of length
     where there can only be maxAdj adjacent letters
@@ -27,6 +33,12 @@ def solve(maxAdj,length,n):
 
     goal: output nth plan 
     '''
-    return
+    numWays = getWays(numLetters, maxAdj)
+    res = ""
+    while len(res) != n:
 
-print(solve(q,r,n))
+        pass
+    return res
+
+# print(getWays(numLetters, maxAdj))
+print(solve(numLetters, maxAdj, n))
