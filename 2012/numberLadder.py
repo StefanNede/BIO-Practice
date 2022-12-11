@@ -1,5 +1,5 @@
 # BIO round 1 q3 - 17/23 -> just 2 sub test case that doesn't work, very weird
-# 256 361 and 66 71 not working
+# 250 361 and 66 71 not working - the only ones that should have a result of 3
 from collections import defaultdict, deque
 
 digits = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"]
