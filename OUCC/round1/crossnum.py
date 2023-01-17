@@ -1,3 +1,4 @@
+# full marks
 def solve(grid):
     res = 0
     for i in range(len(grid)):
