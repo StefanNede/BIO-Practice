@@ -9,7 +9,7 @@ solutions to a range of competitive programming problems
 | 2007 	| ✅   	|    	| ✅	|
 | 2008 	| ✅   	|    	| ✅ 	|
 | 2009 	| ✅  	|    	| ✅  	|
-| 2010 	| ✅ 	|     | ✅  	|
+| 2010 	| ✅ 	|  ✅   | ✅  	|
 | 2011 	|  ✅  	|  ✅  	|  ✅  	|
 | 2012 	|  ✅  	|    	|  ✅  	|
 | 2013 	|  ✅  	|  ✅  	|    	|
