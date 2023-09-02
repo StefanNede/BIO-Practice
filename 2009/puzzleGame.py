@@ -1,4 +1,5 @@
 # BIO round 1 q2
+# errors: scoring isnt correct sometimes
 
 class Game:
     def __init__(self, grid, lC, lmC, rmC, rC):
@@ -11,15 +12,58 @@ class Game:
     
     def hasAdjacents(self, i, j):
         # checks to see if any of the adjacents to element at [i][j] are the same
-        return False
+        current = self.grid[i][j]
+        if i != 0 and self.grid[i-1][j] == current:
+            return True
+        elif i != 3 and self.grid[i+1][j] == current:
+            return True
+        elif j != 0 and self.grid[i][j-1] == current:
+            return True
+        elif j != 3 and self.grid[i][j+1] == current:
+            return True
+        else:
+            return False
         
     def updateGrid(self, interGrid):
         # moves elements down and refills the grid
-        pass
+        # moving elements down
+        interGrid2 = [['*', '*', '*', '*'], ['*', '*', '*', '*'], ['*', '*', '*', '*'], ['*', '*', '*', '*']]
+        c1 = 3
+        c2 = 3
+        c3 = 3
+        c4 = 3
+        mapper = {0:c1, 1:c2, 2:c3, 3:c4}
+        for i in range(3, -1, -1):
+            for j in range(4):
+                if interGrid[i][j] != "*":
+                    interGrid2[mapper[j]][j] = interGrid[i][j]
+                    mapper[j] -= 1
+        
+        
+        c1,c2,c3,c4 = mapper[0], mapper[1], mapper[2], mapper[3]
+        # refilling grid
+        for i in range(c1, -1, -1):
+            interGrid2[i][0] = self.lC[-1]
+            self.lC = [self.lC[-1]] + self.lC[:3]
+        
+        for i in range(c2, -1, -1):
+            interGrid2[i][1] = self.lmC[-1]
+            self.lmC = [self.lmC[-1]] + self.lmC[:3]
+
+        for i in range(c3, -1, -1):
+            interGrid2[i][2] = self.rmC[-1]
+            self.rmC = [self.rmC[-1]] + self.rmC[:3]
+
+        for i in range(c4, -1, -1):
+            interGrid2[i][3] = self.rC[-1]
+            self.rC = [self.rC[-1]] + self.rC[:3]
+        
+        
+        self.grid = interGrid2
 
     def playRound(self):
         # returns False if no blocks to be removed
-        interGrid = ['****', '****', '****', '****']
+        interGrid = [['*', '*', '*', '*'], ['*', '*', '*', '*'], ['*', '*', '*', '*'], ['*', '*', '*', '*']]
         redFound = 0
         blueFound = 0
         greenFound = 0
@@ -36,7 +80,7 @@ class Game:
                     if self.grid[i][j] == 'R': redFound += 1
                     if self.grid[i][j] == 'B': blueFound += 1
                     if self.grid[i][j] == 'G': greenFound += 1
-
+        
         self.updateGrid(interGrid)
 
         # no more possible moves
@@ -52,7 +96,7 @@ class Game:
     
     def outputBoard(self):
         for row in self.grid:
-            print(row)
+            print("".join(row))
 
 def main():
     grid = []
@@ -62,7 +106,7 @@ def main():
     rC = [] # right column
     for i in range(4):
         row = input()
-        grid.append(row)
+        grid.append([i for i in row])
         lC.append(row[0])
         lmC.append(row[1])
         rmC.append(row[2])
@@ -76,8 +120,8 @@ def main():
         else:
             for i in range(n):
                 if not g.playRound():
-                    print("GAME OVER")
                     print(g.score)
+                    print("GAME OVER")
                     return
         
         g.outputBoard()
